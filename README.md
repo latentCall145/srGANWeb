@@ -1,16 +1,16 @@
-#srGAN (and company) Image Rescaler
+# srGAN (and company) Image Rescaler
 
 A web app thing that I made to make it relatively easy to upload your images and try out my srGAN models for yourself. Not much to say other than the fact it uses Flask, TF 2.2 models (sorry TF 2.3 and above).
 ![srGAN on a moose](/figs/srMoose.png)
 
-## Install necessary packages
+## Install necessary packages <h2>
 Windows:
 `pip install -r requirements.txt`
 
 Mac/Linux:
 `pip3 install -r requirements.txt`
 
-## Run the program
+## Run the program <h2>
 Windows:
 `python app.py`
 
