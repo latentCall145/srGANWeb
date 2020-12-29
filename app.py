@@ -111,6 +111,7 @@ def load_model():
         genDict[model] = lm(os.path.join(parentPath, model, 'gen'))
 
     modelCols[model] = 'red'; kwargs[model] = 'red'
+    kwargs['model_name'] = model
     #kwargs = {'model_name': model, 'filename': lrImgPath, 'srimg': srImgPath, 'mmn': mmn}
     return render_template('form.html', **kwargs)
 
