@@ -37,11 +37,16 @@ def allowed_file(filename):
 
 # Deletes old uploaded files from disk
 def rmImg():
-    if pastUpload != '':
-        print(pastUpload)
+    try:
         os.remove(pastUpload)
-        print(pastUpload.replace('/lr/', '/sr/{}/'.format(mmn)))
-        os.remove(pastUpload.replace('/lr/', '/sr/{}/'.format(mmn)))
+    except IOError:
+        print('{} not found, file not removed.'.format(pastUpload))
+
+    srPath = pastUpload.replace('/lr/', '/sr/{}/'.format(mmn))
+    try:
+        os.remove(srPath)
+    except IOError:
+        print('{} not found, file not removed.'.format(srPath))
 
 def cleanUp():
     for i in os.listdir(UPLOAD_FOLDER):
@@ -58,7 +63,10 @@ def cleanUp():
 def buttonMgr():
     if request.method == 'POST':
         if 'rescale_button' in request.form:
-            return rescale_img()
+            try:
+                return rescale_img()
+            except ValueError: # usually if the picture is smaller than 32x32 px
+                flash('Image too small to resize.')
         elif 'srgan_button' in request.form:
             return load_model()
         else:
