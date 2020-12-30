@@ -12,8 +12,15 @@ def bigPred(x, gen): # upscale non-32x32 images; x=np.array, gen=Keras model
     m, h, w, c = x.shape
     ret = np.zeros((m, 4*h, 4*w, c), dtype=np.float16)
     for i in tqdm(range(0, h//32)):
-        for j in tqdm(range(0, w//32)):
+        for j in range(0, w//32):
             ret[:, 128*i:128*(i+1), 128*j:128*(j+1), :] = gen.predict(x[:, 32*i:32*(i+1), 32*j:32*(j+1), :]).astype(np.float16)
+        ret[:, 128*i:128*(i+1), -128:, :] = gen.predict(x[:, 32*i:32*(i+1), -32:, :]).astype(np.float16) # ending block for each row
+
+    for j in tqdm(range(0, w//32)): # fill in black bottom row
+        ret[:, -128:, 128*j:128*(j+1), :] = gen.predict(x[:, -32:, 32*j:32*(j+1), :]).astype(np.float16)
+    ret[:, -128:, -128:, :] = gen.predict(x[:, -32:, -32:, :]).astype(np.float16) # bottom right block
+    print(ret[:, -64, -64, :])
+
     return ret
 
 def srImgFromFile(imageName, gen): # modified function to take in an image path and output a numpy array of the rescaled version
