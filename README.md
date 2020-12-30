@@ -28,6 +28,4 @@ The image below uses esrGAN on the same image above.
 
 Currently, there are some problems with the app although it doesn't matter too much with such a small app that is meant to be run locally;
 1. Wide images will overlap each other (which isn't that much of an issue but still kind of annoying)
-2. Images that don't have a dimension divisible by 32 (i.e. 32x32, 128x32, etc.) will have a black section on the right and bottom since I didn't code the prediction function to assume that images wouldn't be divisible
-3. Uploaded images aren't deleted once a new image is uploaded (although there is a commented line in the app.py (rmImg()) that should remove most images)
-4. The website can't serve multiple users at the same time
+2. The website can't serve multiple users at the same time
