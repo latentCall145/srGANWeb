@@ -28,16 +28,3 @@ body {
   background-color: white;
   padding: 1px;
 }
-
-#m1 {
-  background: {{srGAN}};
-}
-#m2 {
-  background: {{esrGAN_DB}};
-}
-#m3 {
-  background: {{esrGAN_RRDB}};
-}
-#m4 {
-  background: {{esrGAN_RRDB_v2}};
-}

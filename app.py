@@ -16,18 +16,22 @@ model = 'srGAN' # default model is srGAN since it's the fastest
 mmn = model # mutable model name, only changes when an image is rescaled with the model
 
 # button colors for each button that corresponds to a model
-modelCols = {'srGAN': 'gray',
-        'esrGAN_DB': 'gray',
-        'esrGAN_RRDB': 'gray',
-        'esrGAN_RRDB_v2': 'gray'}
+modelNames = {'srGAN', 'esrGAN_DB', 'esrGAN_RRDB', 'esrGAN_RRDB_v2'}
+modelCols = {}
+for i in modelNames:
+    modelCols[i] = 'gray'
+
 modelCols[model] = 'red'
 kwargs = {'model_name': model, 'filename': lrImgPath, 'srimg': srImgPath, 'mmn': mmn}
 kwargs = {**kwargs, **modelCols}
 
 app = Flask(__name__)
+#print(app.config)
 app.config['SECRET_KEY'] = b'sadfl99fsj9(IP(I'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['CACHE_TYPE'] = 'null' # not setting this value to null seemed to cause weird issues
+app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0 # more caching stuff
+app.config['TEMPLATES_AUTO_RELOAD'] = True # more caching stuff
 
 def allowed_file(filename):
     for i in ALLOWED_EXTENSIONS:
@@ -42,7 +46,8 @@ def rmImg():
     except IOError:
         print('{} not found, file not removed.'.format(pastUpload))
 
-    srPath = pastUpload.replace('/lr/', '/sr/{}/'.format(mmn))
+    #srPath = pastUpload.replace('/lr/', '/sr/{}/'.format(mmn))
+    srPath = pastUpload.replace('/lr/', '/sr/')
     try:
         os.remove(srPath)
     except IOError:
@@ -53,10 +58,9 @@ def cleanUp():
         if allowed_file(i):
             os.remove(os.path.join(UPLOAD_FOLDER, i))
     srPath = UPLOAD_FOLDER.replace('lr', 'sr')
-    for d in os.listdir(srPath):
-        for i in os.listdir(os.path.join(srPath, d)):
-            if allowed_file(i):
-                os.remove(os.path.join(srPath, d, i))
+    for i in os.listdir(srPath):
+        if allowed_file(i):
+            os.remove(os.path.join(srPath, i))
 
 # Manages what happens when each button is pressed on the website.
 @app.route('/', methods=['POST', 'GET'])
@@ -99,12 +103,12 @@ def upload_image():
         kwargs['filename'] = lrImgPath
         return render_template('form.html', **kwargs)
 
-# Rescale the uploaded image when the 'Rescale' button is hit
 def rescale_img():
     global srImgPath, mmn, kwargs
-    srImgPath = lrImgPath.replace('/lr/', '/sr/{}/'.format(model))
+    #srImgPath = lrImgPath.replace('/lr/', '/sr/{}/'.format(model))
+    srImgPath = lrImgPath.replace('/lr/', '/sr/')
     mmn = model
-    srImg = srImgFromFile(lrImgPath, genDict[model])
+    srImg = srImgFromFile(lrImgPath, gen=genDict[model])
     print(srImgPath)
     srImg.save(srImgPath)
 
@@ -123,14 +127,14 @@ def load_model():
     modelCols[model] = 'gray'; kwargs[model] = 'gray'
     model = request.form['srgan_button']
     if model not in genDict:
-        genDict[model] = lm(os.path.join(parentPath, model, 'gen'))
+        genDict[model] = lm(os.path.join(parentPath, model))
 
     modelCols[model] = 'red'; kwargs[model] = 'red'
     kwargs['model_name'] = model
     return render_template('form.html', **kwargs)
 
 if __name__ == '__main__':
-    genDict[model] = lm(os.path.join(parentPath, model, 'gen')) # load a default model (srGAN) before running web server
+    genDict[model] = lm(os.path.join(parentPath, model)) # load a default model (srGAN) before running web server
     app.run(host='0.0.0.0', debug=False) # run on local network
     #app.run(debug=True)
     cleanUp()
