@@ -18,11 +18,13 @@ mmn = model # mutable model name, only changes when an image is rescaled with th
 # button colors for each button that corresponds to a model
 modelNames = {'srGAN', 'esrGAN_DB', 'esrGAN_RRDB', 'esrGAN_RRDB_v2'}
 modelCols = {}
+models = {}
 for i in modelNames:
     modelCols[i] = 'gray'
+exactPred = True
 
 modelCols[model] = 'red'
-kwargs = {'model_name': model, 'filename': lrImgPath, 'srimg': srImgPath, 'mmn': mmn}
+kwargs = {'model_name': model, 'filename': lrImgPath, 'srimg': srImgPath, 'mmn': mmn, 'exact_pred_disable': 'gray'}
 kwargs = {**kwargs, **modelCols}
 
 app = Flask(__name__)
@@ -50,6 +52,7 @@ def rmImg():
     srPath = pastUpload.replace('/lr/', '/sr/')
     try:
         os.remove(srPath)
+        kwargs['srimg'] = False
     except IOError:
         print('{} not found, file not removed.'.format(srPath))
 
@@ -66,6 +69,8 @@ def cleanUp():
 @app.route('/', methods=['POST', 'GET'])
 def buttonMgr():
     if request.method == 'POST':
+        if 'exact_pred' in request.form:
+            return allow_exact_pred()
         if 'rescale_button' in request.form:
             try:
                 return rescale_img()
@@ -108,8 +113,8 @@ def rescale_img():
     #srImgPath = lrImgPath.replace('/lr/', '/sr/{}/'.format(model))
     srImgPath = lrImgPath.replace('/lr/', '/sr/')
     mmn = model
-    srImg = srImgFromFile(lrImgPath, gen=genDict[model])
-    print(srImgPath)
+    srImg = srImgFromFile(lrImgPath, gen=genDict[model], exactPred=exactPred, models=models)
+    #print(srImgPath)
     srImg.save(srImgPath)
 
     kwargs['srimg'] = srImgPath
@@ -123,7 +128,7 @@ If so, do nothing, if not, load the model.
 Then, change the button colors to update which model is active.
 '''
 def load_model():
-    global modelCols, model, genDict, kwargs
+    global modelCols, model, genDict, kwargs, exactPred
     modelCols[model] = 'gray'; kwargs[model] = 'gray'
     model = request.form['srgan_button']
     if model not in genDict:
@@ -131,10 +136,29 @@ def load_model():
 
     modelCols[model] = 'red'; kwargs[model] = 'red'
     kwargs['model_name'] = model
+    if model != 'srGAN':
+        exactPred = False
+    else:
+        if kwargs['exact_pred_disable'] == 'gray':
+            exactPred = True
+        else:
+            exactPred = False
+
+    return render_template('form.html', **kwargs)
+
+def allow_exact_pred():
+    global kwargs, exactPred
+    if kwargs['exact_pred_disable'] == 'gray':
+        kwargs['exact_pred_disable'] = 'red'
+        exactPred = False
+    else:
+        kwargs['exact_pred_disable'] = 'gray'
+        exactPred = True
+
     return render_template('form.html', **kwargs)
 
 if __name__ == '__main__':
     genDict[model] = lm(os.path.join(parentPath, model)) # load a default model (srGAN) before running web server
-    app.run(host='0.0.0.0', debug=False) # run on local network
-    #app.run(debug=True)
+    #app.run(host='0.0.0.0', debug=False) # run on local network
+    app.run(debug=True)
     cleanUp()

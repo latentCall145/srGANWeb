@@ -29,15 +29,22 @@ def bigPred(x, gen, chunkSize=(32, 32)): # upscale non-32x32 images; x=np.array,
 
     return ret
 
-def srImgFromFile(imageName, gen=None, modelName='srGAN', exactPred=True): # modified function to take in an image path and output a numpy array of the rescaled version
+def srImgFromFile(imageName, gen=None, models={}, modelName='srGAN', exactPred=True): # modified function to take in an image path and output a numpy array of the rescaled version
     img = cv2.imread(imageName) # BGR -> RGB, divide by 255 to normalize images
     img = img[:, :, ::-1] / 255
-    print(img.shape)
     cX, cY = 32, 32
 
     if exactPred:
         cX = min(img.shape[1], 512); cY = min(img.shape[0], 512)
-        gen = exactModel(modelName, (None, cY, cX, img.shape[-1]))
+        genName = 'srGAN_{}_{}'.format(cX, cY)
+
+        if genName in models.keys():
+            gen = models[genName]
+        else:
+            gen = exactModel(modelName, (None, cY, cX, img.shape[-1]))
+
+            if genName not in models.keys():
+                models[genName] = gen
 
     img = np.expand_dims(img, 0)
     pred = (bigPred(img, gen, chunkSize=(cX, cY))[0] * 255).astype(np.uint8)

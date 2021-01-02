@@ -4,7 +4,6 @@ from tensorflow.keras.models import load_model as lm
 
 def exactModel(model='srGAN', inpSize=(None, 128, 128, 3), save='ram'):
     path = 'models/{}'.format(model)
-    print(path)
     gen = lm(path)
     model_conf = gen.get_config()
     input_layer_name = model_conf['layers'][0]['name']

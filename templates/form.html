@@ -12,11 +12,12 @@
     #m2 { background: {{esrGAN_DB}}; }
     #m3 { background: {{esrGAN_RRDB}}; }
     #m4 { background: {{esrGAN_RRDB_v2}}; }
+    #m5 { background: {{exact_pred_disable}}; }
   </style>
 </head>
 
 <h1 id="top">SRGAN Image Rescaler</h1>
-<h3>Rescale images by 4x the resolution using AI</h3> <br>
+<h4>Rescale images by 4x the resolution using AI</h4>
 
   {% if model_name %}
     <h2>Load a Resizer Model (Using {{ model_name }})</h2>
@@ -24,10 +25,14 @@
     <h2>Load a Resizer Model</h2>
   {% endif %}
   <form method=post text-align=center enctype=multipart/form-data>
-    <input class=button id=m1 type=submit name=srgan_button value=srGAN>
-    <input class=button id=m2 type=submit name=srgan_button value=esrGAN_DB>
-    <input class=button id=m3 type=submit name=srgan_button value=esrGAN_RRDB>
-    <input class=button id=m4 type=submit name=srgan_button value=esrGAN_RRDB_v2> <br>
+    <input class="button big" id=m1 type=submit name=srgan_button value=srGAN>
+    <input class="button big" id=m2 type=submit name=srgan_button value=esrGAN_DB>
+    <input class="button big" id=m3 type=submit name=srgan_button value=esrGAN_RRDB>
+    <input class="button big" id=m4 type=submit name=srgan_button value=esrGAN_RRDB_v2> <br> <br>
+
+    {% if model_name == "srGAN" %}
+      <input class="button small" font-size=5px id=m5 type=submit name=exact_pred value="Disable Reduced Image Chunking? (not recommended)">
+    {% endif %}
   </form>
 
 <div class=column>
@@ -45,9 +50,9 @@
   {% endwith %}
 
   {% if filename %}
-    <img src="{{ filename }} " height="500" class="center"> <br>
+    <img src="{{ filename }} "> <br>
     <form method=post enctype=multipart/form-data>
-      <input class=button type=submit name=rescale_button value=Rescale!> <br> <br>
+      <input class="button big" type=submit name=rescale_button value=Rescale!> <br> <br>
     </form>
   {% endif %}
 </div>
@@ -55,6 +60,6 @@
 <div class=column>
 {% if srimg %}
   <h2>Rescaled Image (Rescaled using {{mmn}})</h2> <br> <br>
-  <img src="{{srimg}}" height="500", class="center"> <br>
+  <img src="{{srimg}}"> <br>
 {% endif %}
 </div>

@@ -25,7 +25,14 @@ The image below uses srGAN.
 The image below uses esrGAN on the same image above.
 ![esrGAN on the same turtle](/figs/esrTurt.png)
 
+I've also added a feature which can make the srGAN model more flexibly resize images of all sizes (by disabling 32x32px resizing chunks when rescaling). You can disable this feature, but I'm not really sure why you would.
 
-Currently, there are some problems with the app although it doesn't matter too much with such a small app that is meant to be run locally;
-1. Wide images will overlap each other (which isn't that much of an issue but still kind of annoying)
-2. The website can't serve multiple users at the same time
+With chunking (not recommended):
+![Chunking on a small image](/figs/cChunk.png)
+![Chunking on an image larger than 32x32px](/figs/turtChunk.png)
+
+Without chunking (default):
+![No chunking on a small image](/figs/cNoChunk.png)
+![No chunking on an image larger than 32x32px](/figs/turtNoChunk.png)
+
+Currently, the website can't serve multiple users at the same time, but it's not like a lot of people are going to use this at the same time, so it doesn't really matter.
