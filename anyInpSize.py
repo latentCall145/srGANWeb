@@ -1,6 +1,8 @@
 import os
-os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 from tensorflow.keras.models import load_model as lm
+import tensorflow as tf
+physical_devices = tf.config.list_physical_devices('GPU')
+tf.config.experimental.set_memory_growth(physical_devices[0], True)
 
 def exactModel(model='srGAN', inpSize=(None, 128, 128, 3), save='ram'):
     path = 'models/{}'.format(model)

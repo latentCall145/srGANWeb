@@ -4,8 +4,6 @@ from tqdm import tqdm
 import numpy as np
 import os, cv2
 
-os.environ['CUDA_VISIBLE_DEVICES'] = '-1' # no GPU, comment this line out to use GPU
-
 parentPath = 'models'
 
 def bigPred(x, gen, chunkSize=(32, 32)): # upscale non-32x32 images; x=np.array, gen=Keras model

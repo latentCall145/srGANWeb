@@ -12,7 +12,8 @@
     #m2 { background: {{esrGAN_DB}}; }
     #m3 { background: {{esrGAN_RRDB}}; }
     #m4 { background: {{esrGAN_RRDB_v2}}; }
-    #m5 { background: {{exact_pred_disable}}; }
+    #m5 { background: {{lightSR}}; }
+    #me { background: {{exact_pred_disable}}; }
   </style>
 </head>
 
@@ -28,10 +29,11 @@
     <input class="button big" id=m1 type=submit name=srgan_button value=srGAN>
     <input class="button big" id=m2 type=submit name=srgan_button value=esrGAN_DB>
     <input class="button big" id=m3 type=submit name=srgan_button value=esrGAN_RRDB>
-    <input class="button big" id=m4 type=submit name=srgan_button value=esrGAN_RRDB_v2> <br> <br>
+    <input class="button big" id=m4 type=submit name=srgan_button value=esrGAN_RRDB_v2>
+    <input class="button big" id=m5 type=submit name=srgan_button value=lightSR> <br> <br>
 
     {% if model_name == "srGAN" %}
-      <input class="button small" font-size=5px id=m5 type=submit name=exact_pred value="Disable Reduced Image Chunking? (not recommended)">
+      <input class="button small" font-size=5px id=me type=submit name=exact_pred value="Disable Reduced Image Chunking? (not recommended)">
     {% endif %}
   </form>
 

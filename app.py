@@ -16,7 +16,7 @@ model = 'srGAN' # default model is srGAN since it's the fastest
 mmn = model # mutable model name, only changes when an image is rescaled with the model
 
 # button colors for each button that corresponds to a model
-modelNames = {'srGAN', 'esrGAN_DB', 'esrGAN_RRDB', 'esrGAN_RRDB_v2'}
+modelNames = {'srGAN', 'esrGAN_DB', 'esrGAN_RRDB', 'esrGAN_RRDB_v2', 'lightSR'}
 modelCols = {}
 models = {}
 for i in modelNames:
